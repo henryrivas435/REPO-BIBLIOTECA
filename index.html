@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIBLIOTEC - Biblioteca Digital</title>
+    <link rel="icon" href="IMAGENES/BiblioTec_logo.ico" type="image/x-icon">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #f4f4f4;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #667eea;
+        }
+        
+        .hero {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%23f9f9f9" width="1200" height="400"/></svg>');
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .search-box {
+            margin: 2rem 0;
+        }
+        
+        .search-box input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .categories {
+            margin: 3rem 0;
+        }
+        
+        .categories h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .category-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .category-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📚 BIBLIOTEC</h1>
+            <p class="tagline">Tu plataforma de acceso a conocimiento</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#libros">Libros</a></li>
+                <li><a href="#revistas">Revistas</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="container">
+            <h2>Explora nuestra colección</h2>
+            <div class="search-box">
+                <input type="text" placeholder="Buscar libros, autores, temas...">
+            </div>
+        </div>
+    </section>
+    
+    <section class="categories">
+        <div class="container">
+            <h2>Categorías principales</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-icon">📖</div>
+                    <h3>Literatura</h3>
+                    <p>Novelas, poesía y obras clásicas</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🔬</div>
+                    <h3>Ciencia</h3>
+                    <p>Física, química y biología</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">💻</div>
+                    <h3>Tecnología</h3>
+                    <p>Programación e informática</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🎓</div>
+                    <h3>Educación</h3>
+                    <p>Recursos educativos y tutoriales</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 BIBLIOTEC. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

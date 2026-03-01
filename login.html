@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIBLIOTEC - Inicio de Sesión</title>
+    <link rel="icon" href="IMAGENES/BiblioTec_logo.ico" type="image/x-icon">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { background: white; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 1200px; margin: 40px auto; padding: 30px; }
+        .flex { display: flex; gap: 32px; }
+        .panel { flex: 1; min-width: 340px; }
+        .logo { text-align: center; margin-bottom: 20px; }
+        .logo-img { width: 64px; height: 64px; display: block; margin: 0 auto 10px; object-fit: contain; }
+        .logo h1 { color: #667eea; font-size: 28px; }
+        .logo p { color: #666; font-size: 12px; margin-top: 5px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; color: #333; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: border-color 0.3s; }
+        input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102,126,234,0.3); }
+        .btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+        .btn:hover { transform: translateY(-2px); }
+        .footer { text-align: center; margin-top: 14px; color: #666; font-size: 13px; }
+        .footer a { color: #667eea; text-decoration: none; cursor: pointer; }
+        .small-link { font-size: 13px; color: #667eea; cursor: pointer; display: inline-block; margin-top: 8px; }
+        .hidden { display: none !important; }
+        .switch { text-align: center; margin-bottom: 10px; }
+        #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 30px; background: rgba(0,0,0,0.8); color: #fff; padding: 10px 16px; border-radius: 6px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, bottom 0.25s ease; z-index: 9999; }
+        #toast.show { opacity: 1; pointer-events: auto; bottom: 40px; }
+        /* Dashboard */
+        .dash-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+        .user-info { color: #333; font-weight: bold; }
+        .logout-btn { background: #dc3545; color: #fff; border: none; border-radius: 5px; padding: 8px 16px; font-size: 15px; cursor: pointer; }
+        .books-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+        .book { background: #f8f8ff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 18px; display: flex; flex-direction: column; align-items: center; }
+        .book img { width: 110px; height: 160px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; }
+        .book h3 { font-size: 18px; color: #222; margin: 0 0 6px 0; text-align: center; }
+        .book .meta { font-size: 13px; color: #555; margin-bottom: 8px; text-align: center; }
+        .book .desc { font-size: 13px; color: #444; margin-bottom: 10px; text-align: center; }
+        .book .price { font-size: 15px; color: #764ba2; font-weight: bold; margin-bottom: 10px; }
+        .book .actions { display: flex; gap: 8px; }
+        .small-btn { padding: 7px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; }
+        .reserve { background: #ffb020; color: #fff; }
+        .borrow { background: #28a745; color: #fff; }
+        .buy { background: #007bff; color: #fff; }
+        .return { background: #6c757d; color: #fff; }
+        .edit { background: #17a2b8; color: #fff; }
+        .delete { background: #dc3545; color: #fff; }
+        .admin-form { background: #f3f3fa; border-radius: 8px; padding: 12px 18px; margin-bottom: 18px; }
+        .admin-form input { margin-bottom: 8px; }
+        @media (max-width: 900px) {
+            .flex { flex-direction: column; }
+            .panel { min-width: unset; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container flex">
+        <!-- Login/Register Panel -->
+        <div class="panel" id="authPanel">
+            <div class="logo">
+                <img src="IMAGENES/BiblioTec_logo.ico" alt="BIBLIOTEC logo" class="logo-img">
+                <h1>BIBLIOTEC</h1>
+                <p>Sistema de Gestión de Bibliotecas</p>
+            </div>
+            <div id="loginView">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUserType">Tipo de Usuario:</label>
+                        <select id="loginUserType" required>
+                            <option value="">Selecciona tu rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginEmail">Correo Electrónico:</label>
+                        <input type="email" id="loginEmail" required placeholder="ejemplo@correo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña:</label>
+                        <input type="password" id="loginPassword" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn">Iniciar Sesión</button>
+                </form>
+                <div class="footer">
+                    <p>¿No tienes cuenta? <a id="showRegister" class="small-link">Regístrate aquí</a></p>
+                    <p><a id="recoverPwd" class="small-link">¿Olvidaste tu contraseña?</a></p>
+                </div>
+            </div>
+            <div id="registerView" class="hidden">
+                <div class="switch"><a id="showLogin" class="small-link">Volver al inicio</a></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regUserType">Tipo de Usuario:</label>
+                        <select id="regUserType" required>
+                            <option value="">Selecciona tu rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Correo Electrónico:</label>
+                        <input type="email" id="regEmail" required placeholder="ejemplo@correo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Contraseña:</label>
+                        <input type="password" id="regPassword" required placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPasswordConfirm">Confirmar Contraseña:</label>
+                        <input type="password" id="regPasswordConfirm" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn">Registrar</button>
+                </form>
+            </div>
+        </div>
+        <!-- Dashboard Panel -->
+        <div class="panel hidden" id="dashboardPanel">
+            <div class="dash-header">
+                <div>
+                    <div class="user-info" id="currentUserInfo">Usuario: —</div>
+                    <div style="font-size:13px;color:#666;" id="currentUserRole">Rol: —</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
+            </div>
+            <div id="adminFormContainer"></div>
+            <h2 style="color:#333;margin-bottom:18px;">Catálogo de la Biblioteca</h2>
+            <div class="books-list" id="booksList"></div>
+        </div>
+    </div>
+    <div id="toast" aria-live="polite"></div>
+    <script>
+        // --- Auth logic ---
+        const STORAGE_KEY = 'bibliotec_users';
+        const CURR_KEY = 'bibliotec_currentUser';
+        const BOOKS_KEY = 'bibliotec_books_data';
+        const STATUS_KEY = 'bibliotec_books_status';
+
+        function loadUsers() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+            catch { return []; }
+        }
+        function saveUsers(users) { localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
+        function showToast(msg, ms = 2500) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timeout);
+            t._timeout = setTimeout(() => t.classList.remove('show'), ms);
+        }
+        const loginView = document.getElementById('loginView');
+        const registerView = document.getElementById('registerView');
+        document.getElementById('showRegister').addEventListener('click', () => { loginView.classList.add('hidden'); registerView.classList.remove('hidden'); });
+        document.getElementById('showLogin').addEventListener('click', () => { registerView.classList.add('hidden'); loginView.classList.remove('hidden'); });
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const role = document.getElementById('regUserType').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regPasswordConfirm').value;
+            if (!role || !email || !password) { showToast('Completa todos los campos.'); return; }
+            if (password !== confirm) { showToast('Las contraseñas no coinciden.'); return; }
+            const users = loadUsers();
+            if (users.some(u => u.email === email)) { showToast('Ya existe un usuario con ese correo.'); return; }
+            users.push({ role, email, password });
+            saveUsers(users);
+            showToast('Se registró correctamente');
+            registerView.classList.add('hidden'); loginView.classList.remove('hidden');
+            document.getElementById('loginEmail').value = email;
+        });
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const role = document.getElementById('loginUserType').value.trim();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            if (!role || !email || !password) { showToast('Completa todos los campos.'); return; }
+            const users = loadUsers();
+            const user = users.find(u => u.email === email && u.password === password && u.role === role);
+            if (!user) { showToast('Credenciales incorrectas.'); return; }
+            localStorage.setItem(CURR_KEY, JSON.stringify({ email: user.email, role: user.role }));
+            showToast('Inicio de sesión exitoso');
+            setTimeout(() => showDashboard(), 800);
+        });
+        document.getElementById('recoverPwd').addEventListener('click', () => {
+            const email = prompt('Introduce tu correo para recuperar contraseña:');
+            if (!email) return;
+            const users = loadUsers();
+            const user = users.find(u => u.email === email.toLowerCase());
+            if (!user) { showToast('Correo no registrado.'); return; }
+            showToast('Funcionalidad de recuperación pendiente. Contacta al administrador.');
+        });
+
+        // --- Books logic ---
+        const DEFAULT_BOOKS = [
+            {id:'b1',title:'Cien Años de Soledad',author:'Gabriel García Márquez',desc:'Novela emblemática del realismo mágico latinoamericano.',img:'https://covers.openlibrary.org/b/id/8228691-L.jpg',price:10},
+            {id:'b2',title:'Don Quijote de la Mancha',author:'Miguel de Cervantes',desc:'La gran obra de la literatura española.',img:'https://covers.openlibrary.org/b/id/10523339-L.jpg',price:8},
+            {id:'b3',title:'El Principito',author:'Antoine de Saint-Exupéry',desc:'Un cuento poético y filosófico para todas las edades.',img:'https://covers.openlibrary.org/b/id/11153237-L.jpg',price:7},
+            {id:'b4',title:'La Sombra del Viento',author:'Carlos Ruiz Zafón',desc:'Misterio y literatura en la Barcelona de posguerra.',img:'https://covers.openlibrary.org/b/id/8375226-L.jpg',price:9},
+            {id:'b5',title:'Veinte Poemas de Amor y una Canción Desesperada',author:'Pablo Neruda',desc:'Colección de poemas románticos.',img:'https://covers.openlibrary.org/b/id/10523341-L.jpg',price:5},
+            {id:'b6',title:'Rayuela',author:'Julio Cortázar',desc:'Novela experimental y revolucionaria.',img:'https://covers.openlibrary.org/b/id/10523343-L.jpg',price:8},
+            {id:'b7',title:'Fervor de Buenos Aires',author:'Jorge Luis Borges',desc:'Poemas sobre la ciudad y la memoria.',img:'https://covers.openlibrary.org/b/id/10523345-L.jpg',price:4},
+            {id:'b8',title:'El Aleph',author:'Jorge Luis Borges',desc:'Cuentos fantásticos y filosóficos.',img:'https://covers.openlibrary.org/b/id/10523347-L.jpg',price:6},
+            {id:'b9',title:'Pedro Páramo',author:'Juan Rulfo',desc:'Novela corta fundamental de la literatura mexicana.',img:'https://covers.openlibrary.org/b/id/10523349-L.jpg',price:7},
+            {id:'b10',title:'La Casa de Bernarda Alba',author:'Federico García Lorca',desc:'Drama sobre la represión y la tradición.',img:'https://covers.openlibrary.org/b/id/10523351-L.jpg',price:6}
+        ];
+        function loadBooks() {
+            let books = [];
+            try { books = JSON.parse(localStorage.getItem(BOOKS_KEY) || '[]'); } catch {}
+            if (!books.length) {
+                books = JSON.parse(JSON.stringify(DEFAULT_BOOKS));
+                saveBooks(books);
+            }
+            return books;
+        }
+        function saveBooks(books) { localStorage.setItem(BOOKS_KEY, JSON.stringify(books)); }
+        function getBookStatus() {
+            try { return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}'); }
+            catch { return {}; }
+        }
+        function setBookStatus(status) {
+            localStorage.setItem(STATUS_KEY, JSON.stringify(status));
+        }
+        function getCurrentUser() {
+            try { return JSON.parse(localStorage.getItem(CURR_KEY)); }
+            catch { return null; }
+        }
+        function showDashboard() {
+            const curr = getCurrentUser();
+            if (!curr) return;
+            document.getElementById('authPanel').classList.add('hidden');
+            document.getElementById('dashboardPanel').classList.remove('hidden');
+            document.getElementById('currentUserInfo').textContent = 'Usuario: ' + curr.email;
+            document.getElementById('currentUserRole').textContent = 'Rol: ' + curr.role;
+            renderBooks();
+            renderAdminForm();
+        }
+        function renderBooks() {
+            const booksList = document.getElementById('booksList');
+            booksList.innerHTML = '';
+            const status = getBookStatus();
+            const curr = getCurrentUser();
+            const books = loadBooks();
+            books.forEach(b => {
+                const st = status[b.id] || {status:'available', user:null};
+                const div = document.createElement('div');
+                div.className = 'book';
+                div.innerHTML = `
+                    <img src="${b.img}" alt="${b.title}">
+                    <h3>${b.title}</h3>
+                    <div class="meta">${b.author}</div>
+                    <div class="desc">${b.desc}</div>
+                    <div class="price">$${b.price} USD</div>
+                `;
+                const actions = document.createElement('div');
+                actions.className = 'actions';
+                if (curr && curr.role === 'admin') {
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'small-btn edit';
+                    editBtn.textContent = 'Editar';
+                    editBtn.onclick = () => editBook(b.id);
+                    actions.appendChild(editBtn);
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'small-btn delete';
+                    delBtn.textContent = 'Eliminar';
+                    delBtn.onclick = () => deleteBook(b.id);
+                    actions.appendChild(delBtn);
+                }
+                if (st.status === 'available') {
+                    const reserveBtn = document.createElement('button');
+                    reserveBtn.className = 'small-btn reserve';
+                    reserveBtn.textContent = 'Reservar';
+                    reserveBtn.onclick = () => { reserveBook(b.id); };
+                    actions.appendChild(reserveBtn);
+                    const borrowBtn = document.createElement('button');
+                    borrowBtn.className = 'small-btn borrow';
+                    borrowBtn.textContent = 'Prestar';
+                    borrowBtn.onclick = () => { borrowBook(b.id); };
+                    actions.appendChild(borrowBtn);
+                    const buyBtn = document.createElement('button');
+                    buyBtn.className = 'small-btn buy';
+                    buyBtn.textContent = 'Comprar';
+                    buyBtn.onclick = () => { buyBook(b.id, b.title, b.price); };
+                    actions.appendChild(buyBtn);
+                } else if (st.status === 'reserved') {
+                    actions.innerHTML += `<span style="color:#ffb020;">Reservado por: ${st.user}</span>`;
+                    if (curr && curr.email === st.user) {
+                        const borrowBtn = document.createElement('button');
+                        borrowBtn.className = 'small-btn borrow';
+                        borrowBtn.textContent = 'Prestar (tu reserva)';
+                        borrowBtn.onclick = () => { borrowBook(b.id); };
+                        actions.appendChild(borrowBtn);
+                        const buyBtn = document.createElement('button');
+                        buyBtn.className = 'small-btn buy';
+                        buyBtn.textContent = 'Comprar';
+                        buyBtn.onclick = () => { buyBook(b.id, b.title, b.price); };
+                        actions.appendChild(buyBtn);
+                    }
+                } else if (st.status === 'borrowed') {
+                    actions.innerHTML += `<span style="color:#28a745;">Prestado a: ${st.user}</span>`;
+                    if (curr && curr.email === st.user) {
+                        const returnBtn = document.createElement('button');
+                        returnBtn.className = 'small-btn return';
+                        returnBtn.textContent = 'Devolver';
+                        returnBtn.onclick = () => { returnBook(b.id); };
+                        actions.appendChild(returnBtn);
+                        const buyBtn = document.createElement('button');
+                        buyBtn.className = 'small-btn buy';
+                        buyBtn.textContent = 'Comprar';
+                        buyBtn.onclick = () => { buyBook(b.id, b.title, b.price); };
+                        actions.appendChild(buyBtn);
+                    }
+                } else if (st.status === 'sold') {
+                    actions.innerHTML += `<span style="color:#007bff;">Vendido a: ${st.user}</span>`;
+                }
+                div.appendChild(actions);
+                booksList.appendChild(div);
+            });
+        }
+        function reserveBook(id) {
+            const curr = getCurrentUser();
+            if (!curr) { showToast('Inicia sesión para reservar.'); return; }
+            const status = getBookStatus();
+            if (status[id] && status[id].status !== 'available') { showToast('No disponible para reservar.'); return; }
+            status[id] = {status:'reserved', user:curr.email};
+            setBookStatus(status);
+            renderBooks();
+            showToast('Libro reservado correctamente');
+        }
+        function borrowBook(id) {
+            const curr = getCurrentUser();
+            if (!curr) { showToast('Inicia sesión para prestar.'); return; }
+            const status = getBookStatus();
+            if (!status[id] || status[id].status === 'available' || (status[id].status === 'reserved' && status[id].user === curr.email)) {
+                status[id] = {status:'borrowed', user:curr.email};
+                setBookStatus(status);
+                renderBooks();
+                showToast('Libro prestado correctamente');
+            } else {
+                showToast('No puedes prestar este libro');
+            }
+        }
+        function returnBook(id) {
+            const curr = getCurrentUser();
+            if (!curr) { showToast('Inicia sesión para devolver.'); return; }
+            const status = getBookStatus();
+            if (status[id] && status[id].status === 'borrowed' && status[id].user === curr.email) {
+                status[id] = {status:'available', user:null};
+                setBookStatus(status);
+                renderBooks();
+                showToast('Libro devuelto. Gracias');
+            } else {
+                showToast('No puedes devolver este libro');
+            }
+        }
+        function buyBook(id, title, price) {
+            const curr = getCurrentUser();
+            if (!curr) { showToast('Inicia sesión para comprar.'); return; }
+            if (confirm(`¿Deseas comprar "${title}" por $${price} USD?`)) {
+                const status = getBookStatus();
+                status[id] = {status:'sold', user:curr.email};
+                setBookStatus(status);
+                renderBooks();
+                showToast('¡Compra realizada con éxito!');
+            }
+        }
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem(CURR_KEY);
+            document.getElementById('dashboardPanel').classList.add('hidden');
+            document.getElementById('authPanel').classList.remove('hidden');
+            showToast('Sesión cerrada');
+        });
+
+        // --- Admin: agregar, editar, eliminar ---
+        function renderAdminForm() {
+            const curr = getCurrentUser();
+            const cont = document.getElementById('adminFormContainer');
+            if (!curr || curr.role !== 'admin') { cont.innerHTML = ''; return; }
+            cont.innerHTML = `
+                <form id="addBookForm" class="admin-form">
+                    <strong>Agregar libro</strong><br>
+                    <input type="text" id="newTitle" placeholder="Título" required><br>
+                    <input type="text" id="newAuthor" placeholder="Autor" required><br>
+                    <input type="text" id="newDesc" placeholder="Descripción" required><br>
+                    <input type="text" id="newImg" placeholder="URL de imagen" required><br>
+                    <input type="number" id="newPrice" placeholder="Precio en USD" min="1" required><br>
+                    <button type="submit" class="btn" style="margin-top:6px;">Agregar libro</button>
+                </form>
+                <form id="editBookForm" class="admin-form hidden"></form>
+            `;
+            document.getElementById('addBookForm').onsubmit = function(e) {
+                e.preventDefault();
+                const books = loadBooks();
+                const id = 'b' + (Date.now());
+                const title = document.getElementById('newTitle').value.trim();
+                const author = document.getElementById('newAuthor').value.trim();
+                const desc = document.getElementById('newDesc').value.trim();
+                const img = document.getElementById('newImg').value.trim();
+                const price = parseFloat(document.getElementById('newPrice').value);
+                if (!title || !author || !desc || !img || !price) { showToast('Completa todos los campos'); return; }
+                books.push({id, title, author, desc, img, price});
+                saveBooks(books);
+                renderBooks();
+                this.reset();
+                showToast('Libro agregado');
+            };
+        }
+        function editBook(id) {
+            const books = loadBooks();
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+            const form = document.getElementById('editBookForm');
+            form.classList.remove('hidden');
+            form.innerHTML = `
+                <strong>Editar libro</strong><br>
+                <input type="text" id="editTitle" value="${book.title}" required><br>
+                <input type="text" id="editAuthor" value="${book.author}" required><br>
+                <input type="text" id="editDesc" value="${book.desc}" required><br>
+                <input type="text" id="editImg" value="${book.img}" required><br>
+                <input type="number" id="editPrice" value="${book.price}" min="1" required><br>
+                <button type="submit" class="btn" style="margin-top:6px;">Guardar cambios</button>
+                <button type="button" class="btn" id="cancelEdit" style="background:#aaa;margin-top:6px;">Cancelar</button>
+            `;
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                book.title = document.getElementById('editTitle').value.trim();
+                book.author = document.getElementById('editAuthor').value.trim();
+                book.desc = document.getElementById('editDesc').value.trim();
+                book.img = document.getElementById('editImg').value.trim();
+                book.price = parseFloat(document.getElementById('editPrice').value);
+                saveBooks(books);
+                renderBooks();
+                form.classList.add('hidden');
+                showToast('Libro editado');
+            };
+            document.getElementById('cancelEdit').onclick = () => form.classList.add('hidden');
+        }
+        function deleteBook(id) {
+            if (!confirm('¿Eliminar este libro?')) return;
+            let books = loadBooks();
+            books = books.filter(b => b.id !== id);
+            saveBooks(books);
+            const status = getBookStatus();
+            delete status[id];
+            setBookStatus(status);
+            renderBooks();
+            showToast('Libro eliminado');
+        }
+        // Si ya hay sesión, mostrar dashboard
+        (function init() {
+            const curr = getCurrentUser();
+            if (curr) showDashboard();
+        })();
+    </script>
+</body>
+</html>
